@@ -59,19 +59,19 @@ STKAudioPlayerState;
 
 typedef enum
 {
-	STKAudioPlayerStopReasonNone = 0,
-	STKAudioPlayerStopReasonEof,
-	STKAudioPlayerStopReasonUserAction,
-	STKAudioPlayerStopReasonPendingNext,
-	STKAudioPlayerStopReasonDisposed,
-	STKAudioPlayerStopReasonError = 0xffff
+    STKAudioPlayerStopReasonNone = 0,
+    STKAudioPlayerStopReasonEof,
+    STKAudioPlayerStopReasonUserAction,
+    STKAudioPlayerStopReasonPendingNext,
+    STKAudioPlayerStopReasonDisposed,
+    STKAudioPlayerStopReasonError = 0xffff
 }
 STKAudioPlayerStopReason;
 
 typedef enum
 {
-	STKAudioPlayerErrorNone = 0,
-	STKAudioPlayerErrorDataSource,
+    STKAudioPlayerErrorNone = 0,
+    STKAudioPlayerErrorDataSource,
     STKAudioPlayerErrorStreamParseBytesFailed,
     STKAudioPlayerErrorAudioSystemError,
     STKAudioPlayerErrorCodecError,
@@ -88,13 +88,13 @@ typedef struct
     BOOL enableVolumeMixer;
     /// A pointer to a 0 terminated array of band frequencies (iOS 5.0 and later, OSX 10.9 and later)
     Float32 equalizerBandFrequencies[24];
-	/// The size of the internal I/O read buffer. This data in this buffer is transient and does not need to be larger.
+    /// The size of the internal I/O read buffer. This data in this buffer is transient and does not need to be larger.
     UInt32 readBufferSize;
     /// The size of the decompressed buffer (Default is 10 seconds which uses about 1.7MB of RAM)
     UInt32 bufferSizeInSeconds;
     /// Number of seconds of decompressed audio is required before playback first starts for each item (Default is 0.5 seconds. Must be larger than bufferSizeInSeconds)
     Float32 secondsRequiredToStartPlaying;
-	/// Seconds after a seek is performed before data needs to come in (after which the state will change to playing/buffering)
+    /// Seconds after a seek is performed before data needs to come in (after which the state will change to playing/buffering)
     Float32 gracePeriodAfterSeekInSeconds;
     /// Number of seconds of decompressed audio required before playback resumes after a buffer underrun (Default is 5 seconds. Must be larger than bufferSizeinSeconds)
     Float32 secondsRequiredToStartPlayingAfterBufferUnderun;
@@ -136,6 +136,7 @@ typedef void(^STKFrameFilter)(UInt32 channelsPerFrame, UInt32 bytesPerFrame, UIn
 /// Gets or sets the volume (ranges 0 - 1.0).
 /// On iOS the STKAudioPlayerOptionEnableMultichannelMixer option must be enabled for volume to work.
 @property (readwrite) Float32 volume;
+@property (readwrite) Float32 pitchShift;
 /// Gets or sets the player muted state
 @property (readwrite) BOOL muted;
 /// Gets the current item duration in seconds
@@ -169,6 +170,8 @@ typedef void(^STKFrameFilter)(UInt32 channelsPerFrame, UInt32 bytesPerFrame, UIn
 /// URLs with unrecognised schemes will return nil.
 +(STKDataSource*) dataSourceFromURL:(NSURL*)url;
 
++(STKDataSource*) dataSourceFromURL:(NSURL*)url andHeaders:(NSDictionary *)headers;
+
 /// Initializes a new STKAudioPlayer with the default options
 -(id) init;
 
@@ -178,6 +181,10 @@ typedef void(^STKFrameFilter)(UInt32 channelsPerFrame, UInt32 bytesPerFrame, UIn
 /// Plays an item from the given URL string (all pending queued items are removed).
 /// The NSString is used as the queue item ID
 -(void) play:(NSString*)urlString;
+
+/// Plays an item from the given URL string (all pending queued items are removed).
+/// The NSString is used as the queue item ID
+-(void) play:(NSString*)urlString withHeaders:(NSDictionary *)headers;
 
 /// Plays an item from the given URL (all pending queued items are removed)
 -(void) play:(NSString*)urlString withQueueItemID:(NSObject*)queueItemId;
